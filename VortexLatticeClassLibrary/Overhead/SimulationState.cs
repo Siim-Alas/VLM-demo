@@ -18,13 +18,20 @@ namespace VortexLatticeClassLibrary.Overhead
 
         private void OnCoordinatesParsed(object source, CoordinatesParsedEventArgs args)
         {
+            const double wingSpan = 10;
+            const double chord = 1;
+            const int numOfTilesSpanwise = 10;
+            const int numOfTilesChordwise = 50;
+            List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfTilesChordwise);
+
+            // Display
             Console.WriteLine("-------------------------  Coordinates  -----------------------------");
             foreach (List<double> pos in args.Coordinates)
             {
                 Console.WriteLine($"x = {pos[0]}; y = {pos[1]}");
             }
             Console.WriteLine("-------------------------  Camber line  -----------------------------");
-            foreach (List<double> pos in AirfoilGeometryApproximator.GetCamberLine(args.Coordinates))
+            foreach (List<double> pos in camberLine)
             {
                 Console.WriteLine($"x = {pos[0]}; y = {pos[1]}");
             }
