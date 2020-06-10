@@ -11,7 +11,7 @@ namespace VortexLatticeConsoleUI
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("-------------------------  Airfoil file  -----------------------------");
 
             SimulationState simState = new SimulationState();
             simState.InputManager.ParseAirfoilDatFile("C:/Users/Siim/Desktop/goe571.dat");
