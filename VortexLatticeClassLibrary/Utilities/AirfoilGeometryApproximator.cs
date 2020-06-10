@@ -50,5 +50,41 @@ namespace VortexLatticeClassLibrary.Utilities
             }
             return outputPoints;
         }
+
+        public static WingTile[] GetWingTiles(List<List<double>> camberLine, double chord, double wingSpan, int numOfTilesSpanwise)
+        {
+            double tileWidth = wingSpan / numOfTilesSpanwise;
+            WingTile[] wingTiles = new WingTile[numOfTilesSpanwise * (camberLine.Count - 1)];
+            int index = 0;
+
+            for (int i = 0; i < numOfTilesSpanwise; i++)
+            {
+                // camberLine already has the desired amount of points
+                for (int j = 0; j < camberLine.Count - 1; j++)
+                {
+                    // x - chordwise (backwards)
+                    // y - spanwise (to the right)
+                    // z - normal (upwards)
+
+                    wingTiles[index++] = new WingTile(new Vector(new double[] { 
+                                                   chord * camberLine[j][0],
+                                                   i * tileWidth,
+                                                   chord * camberLine[j][1]
+                                                   }), 
+                                                   new Vector(new double[] {
+                                                   chord * camberLine[j][0],
+                                                   (i + 1) * tileWidth,
+                                                   chord * camberLine[j][1]
+                                                   }),
+                                                   new Vector(new double[] {
+                                                   chord * camberLine[j + 1][0],
+                                                   i * tileWidth,
+                                                   chord * camberLine[j + 1][1]
+                                                   })
+                                                   );
+                }
+            }
+            return wingTiles;
+        }
     }
 }

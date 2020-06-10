@@ -18,11 +18,15 @@ namespace VortexLatticeClassLibrary.Overhead
 
         private void OnCoordinatesParsed(object source, CoordinatesParsedEventArgs args)
         {
-            const double wingSpan = 10;
+            const double wingSpan = 7;
             const double chord = 1;
-            const int numOfTilesSpanwise = 10;
-            const int numOfTilesChordwise = 50;
-            List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfTilesChordwise);
+            const int numOfTilesSpanwise = 3;
+            const int numOfPointsChordwise = 5;
+            Vector vInfinity = new Vector(new double[] { 100, 0, 0 });
+            List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
+            WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, chord, wingSpan, numOfTilesSpanwise);
+            Matrix<double> matrix = Aerodynamics.ConstructAICCirculationEquationMatrix(wingTiles, vInfinity);
+            Matrix<double>.SolveWithGaussianElimination(matrix);
 
             // Display
             Console.WriteLine("-------------------------  Coordinates  -----------------------------");
@@ -34,6 +38,15 @@ namespace VortexLatticeClassLibrary.Overhead
             foreach (List<double> pos in camberLine)
             {
                 Console.WriteLine($"x = {pos[0]}; y = {pos[1]}");
+            }
+            Console.WriteLine("-------------------------  Matrix  -----------------------------");
+            foreach (double[] row in matrix.Elements)
+            {
+                foreach (double i in row)
+                {
+                    Console.Write($"{i}==");
+                }
+                Console.WriteLine("\n\n");
             }
         }
     }
