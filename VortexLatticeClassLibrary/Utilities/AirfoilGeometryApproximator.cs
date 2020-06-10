@@ -10,26 +10,45 @@ namespace VortexLatticeClassLibrary.Utilities
         /// <summary>
         /// Approximates the camber line of an airfoil given a list of datapoints.
         /// </summary>
-        /// <param name="points">2-dimensional list of airfoil coordiantes sorted by x-value.</param>
-        /// <returns>2-dimensional list of points on the camber line.</returns>
-        public static List<List<double>> GetCamberLine(List<List<double>> points)
+        /// <param name="points">2-dimensional list of airfoil coordiantes, sorted by x-value.</param>
+        /// <param name="n">Number of points to be returned.</param>
+        /// <returns>2-dimensional list of points on the camber line, sorted by x-value.</returns>
+        public static List<List<double>> GetCamberLine(List<List<double>> points, int n = 100)
         {
-            // The equation of a line defined by 2 points is
-            // y = x * (y_2 - y_1)/(x_2 - x_1) + y_1 - x_1 * (y_2 - y_1)/(x_2 - x_1)
-
-            // Expected format is sorted by x-values
-
-            List<List<double>> camberLinePoints = new List<List<double>>();
-
+            // dp is the set of points defining the camber line, shortened for brevity in expressions
+            List<List<double>> dp = new List<List<double>>();
+            List<List<double>> outputPoints = new List<List<double>>();
+            int j = 0;
+            double deltaPhi = Math.PI / (2 * n - 2);
+            double xi;
+            // Expected format is sorted by x-values, so camberLinePoints will also be sorted by x-value
             for (int i = 0; i < points.Count - 1; i += 2)
             {
-                camberLinePoints.Add(new List<double>() { 
+                dp.Add(new List<double>() { 
                     (points[i][0] + points[i+1][0]) / 2,
                     (points[i][1] + points[i+1][1]) / 2
                 });
             }
-
-            return camberLinePoints;
+            // Values tabulated using the cosine scheme
+            // delta_phi = pi / 2(n - 1)
+            // x_i = 1 - cos(i * delta_phi) ; i = 0, 1, ..., n - 1
+            for (int i = 0; i < n; i++)
+            {
+                xi = 1 - Math.Cos(i * deltaPhi);
+                while (dp[j][0] < xi)
+                {
+                    j++;
+                }
+                j = (j < 1) ? 1 : j;
+                // xi is in (camberLinePoints[j-1][0]; camberLinePoints[j][0]]
+                // The equation of a line defined by 2 points is
+                // y = x * (y_2 - y_1)/(x_2 - x_1) + y_1 - x_1 * (y_2 - y_1)/(x_2 - x_1)
+                outputPoints.Add(new List<double>() { 
+                    xi,
+                    xi * (dp[j][1] - dp[j-1][1]) / (dp[j][0] - dp[j-1][0]) + dp[j-1][1] - dp[j-1][0] * (dp[j][1] - dp[j-1][1]) / (dp[j][0] - dp[j-1][0])
+                });
+            }
+            return outputPoints;
         }
     }
 }
