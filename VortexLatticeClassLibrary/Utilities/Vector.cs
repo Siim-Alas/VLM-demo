@@ -9,13 +9,13 @@ using VortexLatticeClassLibrary.IO;
 
 namespace VortexLatticeClassLibrary.Utilities
 {
-    public struct Vector
+    public readonly struct Vector
     {
         public Vector(double[] coordinates)
         {
             Coordinates = coordinates;
         }
-        public double[] Coordinates { get; private set; }
+        public double[] Coordinates { get; }
         /// <summary>
         /// Returns the dimension of the vector.
         /// </summary>
@@ -60,6 +60,15 @@ namespace VortexLatticeClassLibrary.Utilities
             for (int i = 0; i < coordinates.Length; i++)
             {
                 coordinates[i] = left.Coordinates[i] - right.Coordinates[i];
+            }
+            return new Vector(coordinates);
+        }
+        public static Vector operator-(Vector v)
+        {
+            double[] coordinates = new double[v.Coordinates.Length];
+            for (int i = 0; i < coordinates.Length; i++)
+            {
+                coordinates[i] = -v.Coordinates[i];
             }
             return new Vector(coordinates);
         }

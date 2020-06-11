@@ -22,11 +22,23 @@ namespace VortexLatticeClassLibrary.Overhead
             const double chord = 1;
             const int numOfTilesSpanwise = 3;
             const int numOfPointsChordwise = 5;
-            Vector vInfinity = new Vector(new double[] { 100, 0, 0 });
+            const double rho = 1.225;
+            Vector vInfinity = new Vector(new double[] { 10, 0, 0 });
+
+            // Parse the airfoil file for the 2-dimensional coordinates of the camber line
             List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
+            // Generate an array of wing tiles
             WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, chord, wingSpan, numOfTilesSpanwise);
-            Matrix<double> matrix = Aerodynamics.ConstructAICCirculationEquationMatrix(wingTiles, vInfinity);
-            Matrix<double>.SolveWithGaussianElimination(matrix);
+            // Generate a matrix with the aerodynamic linear equations
+            Matrix<double> EquationMatrix = Aerodynamics.ConstructAICCirculationEquationMatrix(wingTiles, vInfinity);
+            // Solve said equations for gammas (vorticities) with Gaussian elimination
+            double[] gammas = Matrix<double>.SolveWithGaussianElimination(EquationMatrix);
+            // Get the total aerodynamic reaction.
+            Vector totalForce = Aerodynamics.GetTotalForce(wingTiles, vInfinity, gammas, rho);
+            // Get the magnitude of the lift force.
+            double lift = Aerodynamics.GetLift(totalForce);
+            // Get the coefficient of lift.
+            double CL = Aerodynamics.GetCL(lift, vInfinity, wingSpan * chord, rho);
 
             // Display
             Console.WriteLine("-------------------------  Coordinates  -----------------------------");
@@ -40,13 +52,18 @@ namespace VortexLatticeClassLibrary.Overhead
                 Console.WriteLine($"x = {pos[0]}; y = {pos[1]}");
             }
             Console.WriteLine("-------------------------  Matrix  -----------------------------");
-            foreach (double[] row in matrix.Elements)
+            foreach (double[] row in EquationMatrix.Elements)
             {
                 foreach (double i in row)
                 {
                     Console.Write($"{i}==");
                 }
                 Console.WriteLine("\n\n");
+            }
+            Console.WriteLine("-------------------------  Gammas  -----------------------------");
+            foreach (double gamma in gammas)
+            {
+                Console.WriteLine(gamma);
             }
         }
     }
