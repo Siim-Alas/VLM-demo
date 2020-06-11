@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using VortexLatticeClassLibrary.Overhead;
 
 namespace VortexLatticeClassLibrary.IO
@@ -17,14 +18,9 @@ namespace VortexLatticeClassLibrary.IO
         /// <summary>
         /// Parses airfoil datapoints from file and invokes an event with the datapoints (sorted by x) as args.
         /// </summary>
-        /// <param name="path">String file path of the airfoil .dat file.</param>
-        public void ParseAirfoilDatFile(string path)
+        /// <param name="file">The string representing the airfoil .dat file.</param>
+        public async Task ParseAirfoilDatFile(string file)
         {
-            if (!File.Exists(path))
-            {
-                return;
-            }
-
             // Airfoil .dat files are in the following formats
             // Newlines are \r\n
             // Header is optional
@@ -53,19 +49,21 @@ namespace VortexLatticeClassLibrary.IO
             Regex rx = new Regex(@"\b *([ 01]*\.[0-9]+)[ ]+([ 0-]*\.[0-9]+) *.*$");
             Match match;
 
-            foreach (string line in File.ReadLines(path))
+            using (var reader = new StringReader(file))
             {
-                match = rx.Match(line);
-                
-                if (match.Success)
+                string line;
+                while ((line = await reader.ReadLineAsync()) != null)
                 {
-                    coordinates.Add(new List<double>() { 
+                    match = rx.Match(line);
+
+                    if (match.Success)
+                    {
+                        coordinates.Add(new List<double>() {
                         Convert.ToDouble(match.Groups[1].Value, CultureInfo.InvariantCulture),
                         Convert.ToDouble(match.Groups[2].Value, CultureInfo.InvariantCulture)
                     });
+                    }
                 }
-
-                Console.WriteLine(line);
             }
 
             // Coordinates are ordered by x-values

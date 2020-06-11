@@ -7,7 +7,7 @@ namespace VortexLatticeClassLibrary.Utilities
     /// <summary>
     /// A rectangular tile on a wing, defined by 3 position vectors.
     /// </summary>
-    public struct WingTile
+    public readonly struct WingTile
     {
         /// <summary>
         /// Creates a new rectangular wing tile, defined by 3 position vectors.
@@ -24,15 +24,15 @@ namespace VortexLatticeClassLibrary.Utilities
         /// <summary>
         /// The forward-left vertex position vector.
         /// </summary>
-        public Vector FL { get; private set; }
+        public Vector FL { get; }
         /// <summary>
         /// The forward-right vertex position vector.
         /// </summary>
-        public Vector FR { get; private set; }
+        public Vector FR { get; }
         /// <summary>
         /// The back-left vertex position vector.
         /// </summary>
-        public Vector BL { get; private set; }
+        public Vector BL { get; }
         /// <summary>
         /// The normal vector to the tile.
         /// </summary>
@@ -48,6 +48,6 @@ namespace VortexLatticeClassLibrary.Utilities
         /// <summary>
         /// The position-vector of the control point (3/4 from the front).
         /// </summary>
-        public Vector RC { get { return 0.25 * FR + 0.5 * FL + 0.75 * BL; } }
+        public Vector RC { get { return -0.25 * FL + 0.5 * FR + 0.75 * BL; } }
     }
 }
