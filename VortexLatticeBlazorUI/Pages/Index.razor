@@ -24,6 +24,23 @@
     }
 </svg>
 
+wingspan
+<input @bind-value="wingSpan" @bind-value:event="onchange" />
+chord
+<input @bind-value="chord" @bind-value:event="onchange" />
+number of tiles spanwise
+<input @bind-value="numberOfTilesSpanwise" @bind-value:event="onchange" />
+number of tiles chordwise
+<input @bind-value="numberOfTilesChordwise" @bind-value:event="onchange" />
+rho
+<input @bind-value="rho" @bind-value:event="onchange" />
+magnitude of V_infinity
+<input @bind-value="magnitudeOfVInfinity" @bind-value:event="onchange" />
+AOA
+<input @bind-value="aoa" @bind-value:event="onchange" />
+AOY
+<input @bind-value="aoy" @bind-value:event="onchange" />
+
 <textarea @bind-value="File" @bind-value:event="onchange" rows="20" cols="100"></textarea>
 <button type="button" @onclick="OnButtonClicked">Submit</button>
 <button type="button" @onclick="@(() => this.StateHasChanged())"></button>
@@ -33,9 +50,27 @@
     private List<string> coordinates { get; set; } = new List<string>();
     private List<string> camberLine { get; set; } = new List<string>();
 
+    private double wingSpan { get; set; } = 7;
+    private double chord { get; set; } = 1;
+    private int numberOfTilesSpanwise { get; set; } = 10;
+    private int numberOfTilesChordwise { get; set; } = 20;
+    private double rho { get; set; } = 1.225;
+    private double magnitudeOfVInfinity { get; set; } = 30;
+    private double aoa { get; set; } = 0;
+    private double aoy { get; set; } = 0;
+
     private void OnButtonClicked()
     {
-        SimState.IOManager.ParseAirfoilDatFile(File);
+        SimState.IOManager.ParseAirfoilDatFile(File, 
+                                               wingSpan, 
+                                               chord, 
+                                               numberOfTilesSpanwise, 
+                                               numberOfTilesChordwise, 
+                                               rho, 
+                                               magnitudeOfVInfinity, 
+                                               aoa, 
+                                               aoy
+                                               );
 
         coordinates.Clear();
         for (int i = 0; i < SimState.IOManager.Coordinates.GetLength(0); i++)

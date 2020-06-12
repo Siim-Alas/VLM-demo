@@ -22,18 +22,17 @@ namespace VortexLatticeClassLibrary.Overhead
 
         private void OnCoordinatesParsed(object source, CoordinatesParsedEventArgs args)
         {
-            const double wingSpan = 7;
-            const double chord = 1;
-            const int numOfTilesSpanwise = 10;
-            const int numOfPointsChordwise = 20;
-            const double rho = 1.225;
-            Vector vInfinity = new Vector(new double[] { 5, 0, 0 });
+            Vector vInfinity = new Vector(new double[] { 
+                Math.Cos(args.AOA) * Math.Cos(args.AOY) * args.MagnitudeOfVInfinity,
+                -Math.Sin(args.AOY) * args.MagnitudeOfVInfinity, 
+                Math.Sin(args.AOA) * Math.Cos(args.AOY) * args.MagnitudeOfVInfinity 
+            });
 
             // Parse the airfoil file for the 2-dimensional coordinates of the camber line
-            double[,] camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
+            double[,] camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, args.NumberOfTilesChordwise + 1);
             
             // Generate an array of wing tiles
-            WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, chord, wingSpan, numOfTilesSpanwise);
+            WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, args.Chord, args.WingSpan, args.NumberOfTilesSpanwise);
             
             // Generate a matrix with the aerodynamic linear equations
             Matrix<double> EquationMatrix = Aerodynamics.ConstructAICCirculationEquationMatrix(wingTiles, vInfinity);
@@ -42,7 +41,7 @@ namespace VortexLatticeClassLibrary.Overhead
             double[] gammas = Matrix<double>.SolveWithGaussianElimination(EquationMatrix);
 
             // Get the total aerodynamic reaction.
-            Vector[] forces = Aerodynamics.GetForces(wingTiles, vInfinity, gammas, rho);
+            Vector[] forces = Aerodynamics.GetForces(wingTiles, vInfinity, gammas, args.Rho);
             Vector totalForce = new Vector(new double[] { 0, 0, 0 });
             foreach (Vector f in forces)
             {
@@ -53,7 +52,7 @@ namespace VortexLatticeClassLibrary.Overhead
             double lift = Aerodynamics.GetLift(totalForce);
             
             // Get the coefficient of lift.
-            double CL = Aerodynamics.GetCL(lift, vInfinity, wingSpan * chord, rho);
+            double CL = Aerodynamics.GetCL(lift, vInfinity, args.WingSpan * args.Chord, args.Rho);
 
             // Display
             Console.WriteLine("-------------------------  Data  -----------------------------");

@@ -33,7 +33,16 @@ namespace VortexLatticeClassLibrary.IO
         /// Parses airfoil datapoints from file and invokes an event with the datapoints (sorted by x) as args.
         /// </summary>
         /// <param name="file">The string representing the airfoil .dat file.</param>
-        public void ParseAirfoilDatFile(string file)
+        public void ParseAirfoilDatFile(string file,
+                                        double? wingSpan,
+                                        double? chord,
+                                        int? numberOfTilesSpanwise,
+                                        int? numberOfTilesChordwise,
+                                        double? rho,
+                                        double? magnitudeOfVInfinity,
+                                        double? aoa,
+                                        double? aoy
+                                        )
         {
             // Airfoil .dat files are in the following formats
             // Newlines are \r\n
@@ -97,7 +106,16 @@ namespace VortexLatticeClassLibrary.IO
             }
 
             // Coordinates are ordered by x-values
-            CoordinatesParsed?.Invoke(this, new CoordinatesParsedEventArgs(Coordinates));
+            CoordinatesParsed?.Invoke(this, new CoordinatesParsedEventArgs(Coordinates, 
+                                                                           wingSpan, 
+                                                                           chord, 
+                                                                           numberOfTilesSpanwise, 
+                                                                           numberOfTilesChordwise, 
+                                                                           rho, 
+                                                                           magnitudeOfVInfinity, 
+                                                                           aoa, 
+                                                                           aoy
+                                                                           ));
         }
         public void OnSimulationComplete(object source, SimulationCompleteEventArgs args)
         {

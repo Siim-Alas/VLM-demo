@@ -45,7 +45,14 @@ namespace VortexLatticeClassLibrary.Utilities
             }
             return outputPoints;
         }
-
+        /// <summary>
+        /// Generates an array of wingtiles.
+        /// </summary>
+        /// <param name="camberLine">The camber line represented by a 2-dimensional array of points.</param>
+        /// <param name="chord">The wing chord length.</param>
+        /// <param name="wingSpan">The wingspan.</param>
+        /// <param name="numOfTilesSpanwise">Number of tiles spanwise.</param>
+        /// <returns>The generated array of wingtiles.</returns>
         public static WingTile[] GetWingTiles(double[,] camberLine, double chord, double wingSpan, int numOfTilesSpanwise)
         {
             double tileWidth = wingSpan / numOfTilesSpanwise;
