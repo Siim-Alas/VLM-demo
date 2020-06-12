@@ -8,21 +8,36 @@ namespace VortexLatticeClassLibrary.Utilities
     public static class Aerodynamics
     {
         /// <summary>
-        /// Compute a vector indicating in which direction a given horse-shoe vortex is contributing velocity.
+        /// Compute the Aerodynamic Influence Coefficienf matrix element w_ij, representing the influence a wing tile j is exerting on the location i.
         /// </summary>
-        /// <param name="r">Position vector of the point being influenced.</param>
-        /// <param name="ra">Position vector of the forward-left vertex of the horse-shoe vortex.</param>
-        /// <param name="rb">Position vector of the forward-right vertex of the horse-shoe vortex.</param>
+        /// <param name="ri">The position vector of the point being influenced by tile j.</param>
+        /// <param name="j">The tile whose horse-shoe vortex is influencing point i.</param>
         /// <returns>The vector indicating in which direction a given horse-shoe vortex is contributing velocity.</returns>
-        public static Vector VHat(Vector r, Vector ra, Vector rb)
+        public static Vector Wij(Vector ri, WingTile j)
         {
             Vector xHat = new Vector(new double[] { 1, 0, 0 });
-            Vector a = r - ra;
-            Vector b = r - rb;
+            Vector a = ri - j.RA;
+            Vector b = ri - j.RB;
             return (Vector.Cross(a, b)*(1/a.Mag + 1/b.Mag)/(a.Mag*b.Mag + a*b) + Vector.Cross(a,xHat)/((a.Mag-a*xHat)*a.Mag) - Vector.Cross(b,xHat)/((b.Mag-b*xHat)*b.Mag)) / (4*Math.PI);
         }
         /// <summary>
-        /// Constructs a set of linear equations (in matrix form) for vorticities.
+        /// Gets the perturbation velocity at a given point r.
+        /// </summary>
+        /// <param name="r">The position vector of the pint being influenced.</param>
+        /// <param name="wingTiles">The array of wingtiles whose horse-shoe vortices are influencing point r.</param>
+        /// <param name="gammas">An array representing the vorticities of the horse-shoe vortices influencing point r.</param>
+        /// <returns>The perturbation velocity vector at the point r.</returns>
+        public static Vector Vi(Vector r, WingTile[] wingTiles, double[] gammas)
+        {
+            Vector vi = new Vector(new double[] { 0, 0, 0 });
+            for (int i = 0; i < wingTiles.Length; i++)
+            {
+                vi += Wij(r, wingTiles[i]) * gammas[i];
+            }
+            return vi;
+        }
+        /// <summary>
+        /// Constructs a set of linear equations (in matrix form) for vorticities, using the normalwash matrix tangential flow condition.
         /// </summary>
         /// <param name="wingTiles">An array of wing tiles.</param>
         /// <param name="vInfinity">The far-field velocity.</param>
@@ -35,8 +50,8 @@ namespace VortexLatticeClassLibrary.Utilities
                 elements[i] = new double[wingTiles.Length + 1];
                 for (int j = 0; j < wingTiles.Length; j++)
                 {
-                    // A_ij = Vhat_j(rc_i) * n_i
-                    elements[i][j] = VHat(wingTiles[i].RC, wingTiles[j].RA, wingTiles[j].RB) * wingTiles[i].N;
+                    // A_ij = W_i(rc_j) * n_i
+                    elements[i][j] = Wij(wingTiles[i].RC, wingTiles[j]) * wingTiles[i].N;
                 }
                 // b_i = - V_infinity * n_i
                 elements[i][wingTiles.Length] = -vInfinity * wingTiles[i].N;
@@ -56,7 +71,10 @@ namespace VortexLatticeClassLibrary.Utilities
             Vector[] forces = new Vector[wingTiles.Length];
             for (int i = 0; i < wingTiles.Length; i++)
             {
-                forces[i] = rho * gammas[i] * Vector.Cross(vInfinity + VHat(wingTiles[i].R, wingTiles[i].RA, wingTiles[i].RB), (wingTiles[i].RB - wingTiles[i].RA) / 2);
+                // v_i = perturbation velocity (at the tile's center) = Sum_1_to_N(w_ij * gamma_j)
+                // l_i = vortex's transverse segment vector
+                // F_i = rho * Gamma_i * Vector.Cross((V_infinity + v_i), l_i) 
+                forces[i] = rho * gammas[i] * Vector.Cross(vInfinity + Vi(wingTiles[i].R, wingTiles, gammas), wingTiles[i].RB - wingTiles[i].RA);
             }
             return forces;
         }

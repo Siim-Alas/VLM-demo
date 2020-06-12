@@ -22,12 +22,12 @@ namespace VortexLatticeClassLibrary.Overhead
 
         private void OnCoordinatesParsed(object source, CoordinatesParsedEventArgs args)
         {
-            const double wingSpan = 1;
+            const double wingSpan = 7;
             const double chord = 1;
-            const int numOfTilesSpanwise = 1;
+            const int numOfTilesSpanwise = 10;
             const int numOfPointsChordwise = 20;
             const double rho = 1.225;
-            Vector vInfinity = new Vector(new double[] { 10, 0, 0 });
+            Vector vInfinity = new Vector(new double[] { 30, 0, 0 });
 
             // Parse the airfoil file for the 2-dimensional coordinates of the camber line
             List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
