@@ -27,10 +27,10 @@ namespace VortexLatticeClassLibrary.Overhead
             const int numOfTilesSpanwise = 10;
             const int numOfPointsChordwise = 20;
             const double rho = 1.225;
-            Vector vInfinity = new Vector(new double[] { 30, 0, 0 });
+            Vector vInfinity = new Vector(new double[] { 5, 0, 0 });
 
             // Parse the airfoil file for the 2-dimensional coordinates of the camber line
-            List<List<double>> camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
+            double[,] camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, numOfPointsChordwise);
             
             // Generate an array of wing tiles
             WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, chord, wingSpan, numOfTilesSpanwise);
@@ -56,11 +56,6 @@ namespace VortexLatticeClassLibrary.Overhead
             double CL = Aerodynamics.GetCL(lift, vInfinity, wingSpan * chord, rho);
 
             // Display
-            Console.WriteLine("-------------------------  Coordinates  -----------------------------");
-            foreach (List<double> pos in args.Coordinates)
-            {
-                Console.WriteLine($"x = {pos[0]}; y = {pos[1]}");
-            }
             Console.WriteLine("-------------------------  Data  -----------------------------");
             Console.WriteLine($"CL = {CL}");
 

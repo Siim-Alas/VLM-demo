@@ -38,13 +38,19 @@
         SimState.IOManager.ParseAirfoilDatFile(File);
 
         coordinates.Clear();
-        SimState.IOManager.Coordinates.ForEach(c => coordinates.Add(MapCoordinatesToSVG(c)));
+        for (int i = 0; i < SimState.IOManager.Coordinates.GetLength(0); i++)
+        {
+            coordinates.Add(MapCoordinatesToSVG(SimState.IOManager.Coordinates[i, 0], SimState.IOManager.Coordinates[i, 1]));
+        }
         camberLine.Clear();
-        SimState.IOManager.CamberLine.ForEach(c => camberLine.Add(MapCoordinatesToSVG(c)));
+        for (int i = 0; i < SimState.IOManager.CamberLine.GetLength(0); i++)
+        {
+            camberLine.Add(MapCoordinatesToSVG(SimState.IOManager.CamberLine[i, 0], SimState.IOManager.CamberLine[i, 1]));
+        }
     }
 
-    private string MapCoordinatesToSVG(IList<double> coordinates)
+    private string MapCoordinatesToSVG(double x, double y)
     {
-        return $"{250 + coordinates[0] * 500},{400 - coordinates[1] * 500}";
+        return $"{250 + x * 500},{400 - y * 500}";
     }
 }

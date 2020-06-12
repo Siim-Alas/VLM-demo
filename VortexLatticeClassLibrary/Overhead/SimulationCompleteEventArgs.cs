@@ -7,13 +7,13 @@ namespace VortexLatticeClassLibrary.Overhead
 {
     public class SimulationCompleteEventArgs : EventArgs
     {
-        public SimulationCompleteEventArgs(List<List<double>> camberLine, WingTile[] wingTiles, Vector[] forces)
+        public SimulationCompleteEventArgs(double[,] camberLine, WingTile[] wingTiles, Vector[] forces)
         {
             CamberLine = camberLine;
             WingTiles = wingTiles;
             Forces = forces;
         }
-        public List<List<double>> CamberLine { get; private set; }
+        public double[,] CamberLine { get; private set; }
         public WingTile[] WingTiles { get; private set; }
         public Vector[] Forces { get; private set; }
 

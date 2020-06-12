@@ -18,14 +18,14 @@ namespace VortexLatticeClassLibrary.IO
 
         public IOManager()
         {
-            Coordinates = new List<List<double>>();
-            CamberLine = new List<List<double>>();
+            Coordinates = new double[0, 0];
+            CamberLine = new double[0, 0];
             WingTiles = new WingTile[] { };
             Forces = new Vector[] { };
         }
 
-        public List<List<double>> Coordinates { get; private set; }
-        public List<List<double>> CamberLine { get; private set; }
+        public double[,] Coordinates { get; private set; }
+        public double[,] CamberLine { get; private set; }
         public WingTile[] WingTiles { get; private set; }
         public Vector[] Forces { get; private set; }
 
@@ -50,7 +50,7 @@ namespace VortexLatticeClassLibrary.IO
             //  0.0010700 -.0175200
             //  1.0000000  0.0000000
 
-            // Example of format 2
+            // Example of format 2 (Selig, the one this uses)
 
             //  1.00000  0.00000
             //  0.51893  0.07317
@@ -58,29 +58,46 @@ namespace VortexLatticeClassLibrary.IO
             //  0.94977 - 0.00691
             //  1.00000  0.00000
 
-            Regex rx = new Regex(@"\b *([ 01]*\.[0-9]+)[ ]+([ 0-]*\.[0-9]+) *.*$");
-            Match match;
 
-            Coordinates.Clear();
+            //MatchCollection matches;
+
+            List<List<double>> coordinates = new List<List<double>>();
 
             using (var reader = new StringReader(file))
             {
+                Regex rx = new Regex(@"\b *([ 01]*\.[0-9]+)[ ]+([ 0-]*\.[0-9]+) *.*$");
+                Match match;
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     match = rx.Match(line);
-
+                
                     if (match.Success)
                     {
-                        Coordinates.Add(new List<double>() {
+                        coordinates.Add(new List<double>() {
                         Convert.ToDouble(match.Groups[1].Value, CultureInfo.InvariantCulture),
                         Convert.ToDouble(match.Groups[2].Value, CultureInfo.InvariantCulture)
                     });
                     }
                 }
+
+                //matches = rx.Matches(reader.ReadToEnd());
+                //Coordinates = new double[matches.Count, 2];
+                //for (int i = 0; i < matches.Count; i++)
+                //{
+                //    Coordinates[i, 0] = Convert.ToDouble(matches[i].Groups[1].Value, CultureInfo.InvariantCulture);
+                //    Coordinates[i, 1] = Convert.ToDouble(matches[i].Groups[2].Value, CultureInfo.InvariantCulture);
+                //}
             }
+            Coordinates = new double[coordinates.Count, 2];
+            for (int i = 0; i < coordinates.Count; i++)
+            {
+                Coordinates[i, 0] = coordinates[i][0];
+                Coordinates[i, 1] = coordinates[i][1];
+            }
+
             // Coordinates are ordered by x-values
-            CoordinatesParsed?.Invoke(this, new CoordinatesParsedEventArgs(Coordinates.OrderBy(c => c[0]).ToList()));
+            CoordinatesParsed?.Invoke(this, new CoordinatesParsedEventArgs(Coordinates));
         }
         public void OnSimulationComplete(object source, SimulationCompleteEventArgs args)
         {
