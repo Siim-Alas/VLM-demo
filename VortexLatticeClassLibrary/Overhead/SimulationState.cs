@@ -8,20 +8,23 @@ namespace VortexLatticeClassLibrary.Overhead
 {
     public class SimulationState : ISimulationState
     {
+        public delegate void SimulationCompleteEventHandler(object source, SimulationCompleteEventArgs args);
+        public event SimulationCompleteEventHandler SimulationComplete;
         public SimulationState()
         {
-            InputManager = new InputManager();
-            InputManager.CoordinatesParsed += OnCoordinatesParsed;
+            IOManager = new IOManager();
+            IOManager.CoordinatesParsed += OnCoordinatesParsed;
+            SimulationComplete += IOManager.OnSimulationComplete;
         }
 
-        public InputManager InputManager { get; private set; }
+        public IOManager IOManager { get; private set; }
 
         private void OnCoordinatesParsed(object source, CoordinatesParsedEventArgs args)
         {
-            const double wingSpan = 30;
+            const double wingSpan = 1;
             const double chord = 1;
-            const int numOfTilesSpanwise = 10;
-            const int numOfPointsChordwise = 10;
+            const int numOfTilesSpanwise = 1;
+            const int numOfPointsChordwise = 20;
             const double rho = 1.225;
             Vector vInfinity = new Vector(new double[] { 10, 0, 0 });
 
@@ -54,6 +57,8 @@ namespace VortexLatticeClassLibrary.Overhead
             }
             Console.WriteLine("-------------------------  Data  -----------------------------");
             Console.WriteLine($"CL = {CL}");
+
+            SimulationComplete?.Invoke(this, new SimulationCompleteEventArgs(camberLine));
         }
     }
 }

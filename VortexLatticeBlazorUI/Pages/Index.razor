@@ -1,17 +1,29 @@
 ﻿@page "/"
 @inject VortexLatticeClassLibrary.Overhead.ISimulationState SimState
 
-<h1>Hello, world!</h1>
+<svg width="1000" height="500">
+    <polyline points="@string.Join(' ', coordinates)"
+                style="fill:none;stroke:black;stroke-width:3" />
+    <polyline points="@string.Join(' ', camberLine)"
+                style="fill:none;stroke:black;stroke-width:3" />
+</svg>
 
-Welcome to your new app.
 <textarea @bind-value="File" @bind-value:event="onchange" rows="20" cols="100"></textarea>
 <button type="button" @onclick="OnButtonClicked">Submit</button>
+<button type="button" @onclick="@(() => this.StateHasChanged())"></button>
 
 @code {
     private string File { get; set; }
+    private List<string> coordinates { get; set; } = new List<string>();
+    private List<string> camberLine { get; set; } = new List<string>();
 
     private async Task OnButtonClicked()
     {
-        await SimState.InputManager.ParseAirfoilDatFile(File);
+        await Task.Run(() => { SimState.IOManager.ParseAirfoilDatFile(File); });
+
+        coordinates.Clear();
+        SimState.IOManager.Coordinates.ForEach(c => coordinates.Add($"{250 + c[0]*500},{400 - c[1]*500}"));
+        camberLine.Clear();
+        SimState.IOManager.CamberLine.ForEach(c => camberLine.Add($"{250 + c[0]*500},{400 - c[1]*500}"));
     }
 }

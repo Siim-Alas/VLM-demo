@@ -34,6 +34,10 @@ namespace VortexLatticeClassLibrary.Utilities
         /// </summary>
         public Vector BL { get; }
         /// <summary>
+        /// The ceter point position vector.
+        /// </summary>
+        public Vector R { get { return (FR + BL) / 2; } }
+        /// <summary>
         /// The normal vector to the tile.
         /// </summary>
         public Vector N { get { return Vector.Cross(BL - FL, FR - FL); } }

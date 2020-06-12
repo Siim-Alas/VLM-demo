@@ -7,6 +7,6 @@ namespace VortexLatticeClassLibrary.Overhead
 {
     public interface ISimulationState
     {
-        InputManager InputManager { get; }
+        IOManager IOManager { get; }
     }
 }

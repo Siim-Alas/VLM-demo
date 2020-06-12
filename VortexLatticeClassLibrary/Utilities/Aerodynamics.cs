@@ -39,7 +39,7 @@ namespace VortexLatticeClassLibrary.Utilities
                     elements[i][j] = VHat(wingTiles[i].RC, wingTiles[j].RA, wingTiles[j].RB) * wingTiles[i].N;
                 }
                 // b_i = - V_infinity * n_i
-                elements[i][wingTiles.Length] = vInfinity * wingTiles[i].N;
+                elements[i][wingTiles.Length] = -vInfinity * wingTiles[i].N;
             }
             return new Matrix<double>(elements);
         }
@@ -53,7 +53,7 @@ namespace VortexLatticeClassLibrary.Utilities
         /// <returns>The force-vector exerted by the given tile on its control point.</returns>
         public static Vector GetFi(WingTile tile, Vector vInfinity, double gamma, double rho)
         {
-            return rho * gamma * Vector.Cross(vInfinity + VHat(tile.RC, tile.RA, tile.RB), (tile.RB - tile.RA) / 2);
+            return rho * gamma * Vector.Cross(vInfinity + VHat(tile.R, tile.RA, tile.RB), (tile.RB - tile.RA) / 2);
         }
         /// <summary>
         /// Gets the total force vector exerted by an array of wing tiles.
