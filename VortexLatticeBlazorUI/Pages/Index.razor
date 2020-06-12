@@ -6,6 +6,22 @@
                 style="fill:none;stroke:black;stroke-width:3" />
     <polyline points="@string.Join(' ', camberLine)"
                 style="fill:none;stroke:black;stroke-width:3" />
+    @foreach (VortexLatticeClassLibrary.Utilities.WingTile t in SimState.IOManager.WingTiles)
+    {
+        <line x1="@(250 + t.R.Coordinates[0]*500)" 
+              y1="@(400 - t.R.Coordinates[2]*500)" 
+              x2="@(250 + (t.R.Coordinates[0] + t.N.Coordinates[0])*500)" 
+              y2="@(400 - (t.R.Coordinates[2] + t.N.Coordinates[2])*500)" 
+              style="stroke:rgb(255,0,0);stroke-width:2" />
+    }
+    @for (int i = 0; i < SimState.IOManager.WingTiles.Length; i++)
+    {
+        <line x1="@(250 + SimState.IOManager.WingTiles[i].R.Coordinates[0]*500)" 
+              y1="@(400 - SimState.IOManager.WingTiles[i].R.Coordinates[2]*500)" 
+              x2="@(250 + (SimState.IOManager.WingTiles[i].R.Coordinates[0] + SimState.IOManager.Forces[i].Coordinates[0])*500)" 
+              y2="@(400 - (SimState.IOManager.WingTiles[i].R.Coordinates[2] + SimState.IOManager.Forces[i].Coordinates[2])*500)" 
+              style="stroke:rgb(0,0,255);stroke-width:2" />
+    }
 </svg>
 
 <textarea @bind-value="File" @bind-value:event="onchange" rows="20" cols="100"></textarea>
@@ -17,13 +33,18 @@
     private List<string> coordinates { get; set; } = new List<string>();
     private List<string> camberLine { get; set; } = new List<string>();
 
-    private async Task OnButtonClicked()
+    private void OnButtonClicked()
     {
-        await Task.Run(() => { SimState.IOManager.ParseAirfoilDatFile(File); });
+        SimState.IOManager.ParseAirfoilDatFile(File);
 
         coordinates.Clear();
-        SimState.IOManager.Coordinates.ForEach(c => coordinates.Add($"{250 + c[0]*500},{400 - c[1]*500}"));
+        SimState.IOManager.Coordinates.ForEach(c => coordinates.Add(MapCoordinatesToSVG(c)));
         camberLine.Clear();
-        SimState.IOManager.CamberLine.ForEach(c => camberLine.Add($"{250 + c[0]*500},{400 - c[1]*500}"));
+        SimState.IOManager.CamberLine.ForEach(c => camberLine.Add(MapCoordinatesToSVG(c)));
+    }
+
+    private string MapCoordinatesToSVG(IList<double> coordinates)
+    {
+        return $"{250 + coordinates[0] * 500},{400 - coordinates[1] * 500}";
     }
 }

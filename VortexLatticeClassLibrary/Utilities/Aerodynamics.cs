@@ -44,33 +44,21 @@ namespace VortexLatticeClassLibrary.Utilities
             return new Matrix<double>(elements);
         }
         /// <summary>
-        /// Gets the force vector exerted by a tile on int control point (on itself).
-        /// </summary>
-        /// <param name="tile">The tile exerting the force.</param>
-        /// <param name="vInfinity">The far-field velocity.</param>
-        /// <param name="gamma">The vorticity of the horse-shoe vortex associated with the tile.</param>
-        /// <param name="rho">The density of the air.</param>
-        /// <returns>The force-vector exerted by the given tile on its control point.</returns>
-        public static Vector GetFi(WingTile tile, Vector vInfinity, double gamma, double rho)
-        {
-            return rho * gamma * Vector.Cross(vInfinity + VHat(tile.R, tile.RA, tile.RB), (tile.RB - tile.RA) / 2);
-        }
-        /// <summary>
-        /// Gets the total force vector exerted by an array of wing tiles.
+        /// Gets the force vectors exerted by an array of wing tiles.
         /// </summary>
         /// <param name="wingTiles">The array of wing tiles exerting the force.</param>
         /// <param name="vInfinity">The far-field velocity.</param>
         /// <param name="gammas">The strength of the horse-shoe vortices on each tile.</param>
         /// <param name="rho">The density of the air.</param>
-        /// <returns>The total force vector exerted by an array of wing tiles.</returns>
-        public static Vector GetTotalForce(WingTile[] wingTiles, Vector vInfinity, double[] gammas, double rho)
+        /// <returns>The force vectors exerted by the array of wing tiles.</returns>
+        public static Vector[] GetForces(WingTile[] wingTiles, Vector vInfinity, double[] gammas, double rho)
         {
-            Vector F = new Vector(new double[3]);
+            Vector[] forces = new Vector[wingTiles.Length];
             for (int i = 0; i < wingTiles.Length; i++)
             {
-                F += GetFi(wingTiles[i], vInfinity, gammas[i], rho);
+                forces[i] = rho * gammas[i] * Vector.Cross(vInfinity + VHat(wingTiles[i].R, wingTiles[i].RA, wingTiles[i].RB), (wingTiles[i].RB - wingTiles[i].RA) / 2);
             }
-            return F;
+            return forces;
         }
         /// <summary>
         /// Gets the lift(z)-component of a force.

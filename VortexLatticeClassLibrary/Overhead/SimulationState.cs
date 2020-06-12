@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using VortexLatticeClassLibrary.IO;
 using VortexLatticeClassLibrary.Utilities;
@@ -39,9 +40,14 @@ namespace VortexLatticeClassLibrary.Overhead
             
             // Solve said equations for gammas (vorticities) with Gaussian elimination
             double[] gammas = Matrix<double>.SolveWithGaussianElimination(EquationMatrix);
-            
+
             // Get the total aerodynamic reaction.
-            Vector totalForce = Aerodynamics.GetTotalForce(wingTiles, vInfinity, gammas, rho);
+            Vector[] forces = Aerodynamics.GetForces(wingTiles, vInfinity, gammas, rho);
+            Vector totalForce = new Vector(new double[] { 0, 0, 0 });
+            foreach (Vector f in forces)
+            {
+                totalForce += f;
+            }
             
             // Get the magnitude of the lift force.
             double lift = Aerodynamics.GetLift(totalForce);
@@ -58,7 +64,7 @@ namespace VortexLatticeClassLibrary.Overhead
             Console.WriteLine("-------------------------  Data  -----------------------------");
             Console.WriteLine($"CL = {CL}");
 
-            SimulationComplete?.Invoke(this, new SimulationCompleteEventArgs(camberLine));
+            SimulationComplete?.Invoke(this, new SimulationCompleteEventArgs(camberLine, wingTiles, forces));
         }
     }
 }

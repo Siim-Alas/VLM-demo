@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VortexLatticeClassLibrary.Overhead;
+using VortexLatticeClassLibrary.Utilities;
 
 namespace VortexLatticeClassLibrary.IO
 {
@@ -19,10 +20,14 @@ namespace VortexLatticeClassLibrary.IO
         {
             Coordinates = new List<List<double>>();
             CamberLine = new List<List<double>>();
+            WingTiles = new WingTile[] { };
+            Forces = new Vector[] { };
         }
 
         public List<List<double>> Coordinates { get; private set; }
         public List<List<double>> CamberLine { get; private set; }
+        public WingTile[] WingTiles { get; private set; }
+        public Vector[] Forces { get; private set; }
 
         /// <summary>
         /// Parses airfoil datapoints from file and invokes an event with the datapoints (sorted by x) as args.
@@ -80,6 +85,8 @@ namespace VortexLatticeClassLibrary.IO
         public void OnSimulationComplete(object source, SimulationCompleteEventArgs args)
         {
             CamberLine = args.CamberLine;
+            WingTiles = args.WingTiles;
+            Forces = args.Forces;
         }
     }
 }
