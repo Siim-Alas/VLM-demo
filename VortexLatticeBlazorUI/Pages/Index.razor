@@ -1,75 +1,89 @@
 ﻿@page "/"
+@using VortexLatticeBlazorUI.Models
 @inject VortexLatticeClassLibrary.Overhead.ISimulationState SimState
 
-<svg width="1000" height="500">
+<svg width="1000" height="800">
     <polyline points="@string.Join(' ', coordinates)"
                 style="fill:none;stroke:black;stroke-width:3" />
     <polyline points="@string.Join(' ', camberLine)"
                 style="fill:none;stroke:black;stroke-width:3" />
+    <line x1="@(250 - Math.Cos(model.AOA) * model.MagnitudeOfVInfinity * 10)" 
+          y1="@(500 + Math.Sin(model.AOA) * model.MagnitudeOfVInfinity * 10)" 
+          x2="250" 
+          y2="500" 
+          style="stroke:rgb(0,255,0);stroke-width:2"/>
     @foreach (VortexLatticeClassLibrary.Utilities.WingTile t in SimState.IOManager.WingTiles)
     {
         <line x1="@(250 + t.R.Coordinates[0]*500)" 
-              y1="@(400 - t.R.Coordinates[2]*500)" 
+              y1="@(500 - t.R.Coordinates[2]*500)" 
               x2="@(250 + (t.R.Coordinates[0] + t.N.Coordinates[0])*500)" 
-              y2="@(400 - (t.R.Coordinates[2] + t.N.Coordinates[2])*500)" 
+              y2="@(500 - (t.R.Coordinates[2] + t.N.Coordinates[2])*500)" 
               style="stroke:rgb(255,0,0);stroke-width:2" />
     }
     @for (int i = 0; i < SimState.IOManager.WingTiles.Length; i++)
     {
         <line x1="@(250 + SimState.IOManager.WingTiles[i].R.Coordinates[0]*500)" 
-              y1="@(400 - SimState.IOManager.WingTiles[i].R.Coordinates[2]*500)" 
-              x2="@(250 + (SimState.IOManager.WingTiles[i].R.Coordinates[0] + SimState.IOManager.Forces[i].Coordinates[0])*500)" 
-              y2="@(400 - (SimState.IOManager.WingTiles[i].R.Coordinates[2] + SimState.IOManager.Forces[i].Coordinates[2])*500)" 
+              y1="@(500 - SimState.IOManager.WingTiles[i].R.Coordinates[2]*500)" 
+              x2="@(250 + (SimState.IOManager.WingTiles[i].R.Coordinates[0] + SimState.IOManager.Forces[i].Coordinates[0] / 10)*500)" 
+              y2="@(500 - (SimState.IOManager.WingTiles[i].R.Coordinates[2] + SimState.IOManager.Forces[i].Coordinates[2] / 10)*500)" 
               style="stroke:rgb(0,0,255);stroke-width:2" />
     }
 </svg>
 
-wingspan
-<input @bind-value="wingSpan" @bind-value:event="onchange" />
-chord
-<input @bind-value="chord" @bind-value:event="onchange" />
-number of tiles spanwise
-<input @bind-value="numberOfTilesSpanwise" @bind-value:event="onchange" />
-number of tiles chordwise
-<input @bind-value="numberOfTilesChordwise" @bind-value:event="onchange" />
-rho
-<input @bind-value="rho" @bind-value:event="onchange" />
-magnitude of V_infinity
-<input @bind-value="magnitudeOfVInfinity" @bind-value:event="onchange" />
-AOA
-<input @bind-value="aoa" @bind-value:event="onchange" />
-AOY
-<input @bind-value="aoy" @bind-value:event="onchange" />
+<EditForm Model="@model" OnValidSubmit="OnButtonClicked">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="file">The airfoil coordinate file in Selig format:</label>
+        <InputTextArea id="file" class="form-control" @bind-Value="model.File"></InputTextArea>
+    </div>
+    <div class="form-inline">
+        <label for="wingSpan">The wingspan:</label>
+        <InputNumber TValue="double" id="wingSpan" class="form-control" @bind-Value="model.WingSpan" />
 
-<textarea @bind-value="File" @bind-value:event="onchange" rows="20" cols="100"></textarea>
-<button type="button" @onclick="OnButtonClicked">Submit</button>
+        <label for="chord">Chord:</label>
+        <InputNumber TValue="double" id="chord" class="form-control" @bind-Value="model.Chord" />
+
+        <label for="numberOfTilesSpanwise">The number of tiles spanwise:</label>
+        <InputNumber TValue="int" id="numberOfTilesSpanwise" class="form-control" @bind-Value="model.NumberOfTilesSpanwise" />
+
+        <label for="numberOfTilesChordwise">The number of tiles chordwise:</label>
+        <InputNumber TValue="int" id="numberOfTilesChordwise" class="form-control" @bind-Value="model.NumberOfTilesChordwise" />
+        
+        <label for="rho">The density of air:</label>
+        <InputNumber TValue="double" id="rho" class="form-control" @bind-Value="model.Rho" />
+        
+        <label for="magnitudeOfVInfinity">The magnitude of V_infinity:</label>
+        <InputNumber TValue="double" id="magnitudeOfVInfinity" class="form-control" @bind-Value="model.MagnitudeOfVInfinity" />
+        
+        <label for="aoa">The angle of attack (in radians):</label>
+        <InputNumber TValue="double" id="aoa" class="form-control" @bind-Value="model.AOA" />
+        
+        <label for="aoy">The sideslip angle (in radians):</label>
+        <InputNumber TValue="double" id="aoy" class="form-control" @bind-Value="model.AOY" />
+    </div>
+    <button type="submit">Submit</button>
+</EditForm>
+
 <button type="button" @onclick="@(() => this.StateHasChanged())"></button>
 
 @code {
-    private string File { get; set; }
     private List<string> coordinates { get; set; } = new List<string>();
     private List<string> camberLine { get; set; } = new List<string>();
 
-    private double wingSpan { get; set; } = 7;
-    private double chord { get; set; } = 1;
-    private int numberOfTilesSpanwise { get; set; } = 10;
-    private int numberOfTilesChordwise { get; set; } = 20;
-    private double rho { get; set; } = 1.225;
-    private double magnitudeOfVInfinity { get; set; } = 30;
-    private double aoa { get; set; } = 0;
-    private double aoy { get; set; } = 0;
+    private SimulationParameterModel model = new SimulationParameterModel();
 
     private void OnButtonClicked()
     {
-        SimState.IOManager.ParseAirfoilDatFile(File, 
-                                               wingSpan, 
-                                               chord, 
-                                               numberOfTilesSpanwise, 
-                                               numberOfTilesChordwise, 
-                                               rho, 
-                                               magnitudeOfVInfinity, 
-                                               aoa, 
-                                               aoy
+        SimState.IOManager.ParseAirfoilDatFile(model.File, 
+                                               model.WingSpan, 
+                                               model.Chord, 
+                                               model.NumberOfTilesSpanwise, 
+                                               model.NumberOfTilesChordwise, 
+                                               model.Rho, 
+                                               model.MagnitudeOfVInfinity, 
+                                               model.AOA, 
+                                               model.AOY
                                                );
 
         coordinates.Clear();
@@ -86,6 +100,6 @@ AOY
 
     private string MapCoordinatesToSVG(double x, double y)
     {
-        return $"{250 + x * 500},{400 - y * 500}";
+        return $"{250 + x * 500},{500 - y * 500}";
     }
 }
