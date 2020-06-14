@@ -16,3 +16,7 @@ it publishes a new event with data gathered from the simulation run.
 
 This event is subsequently handled by a method in IOManager, resulting in its output properties being updated. The Blazor render tree is 
 then updaetd with the new properites.
+
+## Publish notes
+
+Copy VortexLatticeBlazorUI/bin/Release/netstandard2.1/publish/wwwroot to $web.
