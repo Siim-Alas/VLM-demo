@@ -79,25 +79,34 @@ namespace VortexLatticeClassLibrary.Utilities
             return forces;
         }
         /// <summary>
-        /// Gets the lift(z)-component of a force.
+        /// Gets the total force by adding individual forces.
         /// </summary>
-        /// <param name="totalForce">The total force vector.</param>
-        /// <returns>The lift(z)-component of a force.</returns>
-        public static double GetLift(Vector totalForce)
+        /// <param name="forces">The array of force-vectors o be summed.</param>
+        /// <returns>The sum of the forces.</returns>
+        public static Vector GetTotalForce(Vector[] forces)
         {
-            return totalForce * new Vector(new double[] { 0, 0, 1 });
+            Vector totalForce = new Vector(new double[] { 0, 0, 0 });
+            foreach (Vector f in forces)
+            {
+                totalForce += f;
+            }
+            return totalForce;
         }
         /// <summary>
-        /// Gets the coefficient of lift.
+        /// Gets the total moment about a point r.
         /// </summary>
-        /// <param name="lift">The magnitude of the lift-force.</param>
-        /// <param name="vInfinity">The far-field velocity.</param>
-        /// <param name="S">The reference area of the wing.</param>
-        /// <param name="rho">The density of the air.</param>
-        /// <returns>The coefficient of lift.</returns>
-        public static double GetCL(double lift, Vector vInfinity, double S, double rho)
+        /// <param name="r">The position-vector of the point about which the moment is being calculated.</param>
+        /// <param name="forces">An array of forces, corresponding to the array of wing tiles.</param>
+        /// <param name="wingTiles">An array of wing tiles, correcponding to the array of forces.</param>
+        /// <returns>The total moment about point r.</returns>
+        public static Vector GetTotalMoment(Vector r, Vector[] forces, WingTile[] wingTiles)
         {
-            return 2 * lift / (rho * Math.Pow(vInfinity.Mag, 2) * S);
+            Vector totalMoment = new Vector(new double[] { 0, 0, 0 });
+            for (int i = 0; i < forces.Length; i++)
+            {
+                totalMoment += Vector.Cross(forces[i], wingTiles[i].R - r);
+            }
+            return totalMoment;
         }
     }
 }

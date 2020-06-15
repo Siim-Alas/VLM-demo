@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "AFRRyQ/OuizPatqKTPBTvwpvhcbPFEE4ncVm7cAxl7c2T97i5+0FmYDW48lSJ6VzGI6X0dBXTWC1VZT0FLZjbw==",
+  "dgSpecHash": "8seAHU3xTbofDSGhHUxzApZd4sfbaFlZZgReSYQVjOIZV4CEoASBs50KUgrwSJkULDF8m5emgojztB4w2NIqnw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Siim\\source\\repos\\VortexLatticeDemo\\VortexLatticeClassLibrary\\VortexLatticeClassLibrary.csproj",
   "expectedPackageFiles": [
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Siim\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512"
   ],
   "logs": []
 }

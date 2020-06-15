@@ -30,6 +30,19 @@
     }
 </svg>
 
+<div class="card">
+    <div class="card-header">
+        <h4>Data</h4>
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <p>
+                CL = @SimState.IOManager.CL ; CDI = @SimState.IOManager.CDI ; CM = @SimState.IOManager.CM 
+            </p>
+        </div>
+    </div>
+</div>
+
 <EditForm Model="@model" OnValidSubmit="OnButtonClicked">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -56,10 +69,10 @@
         <label for="magnitudeOfVInfinity">The magnitude of V_infinity:</label>
         <InputNumber TValue="double" id="magnitudeOfVInfinity" class="form-control" @bind-Value="model.MagnitudeOfVInfinity" />
         
-        <label for="aoa">The angle of attack (in radians):</label>
+        <label for="aoa">The angle of attack (in degrees):</label>
         <InputNumber TValue="double" id="aoa" class="form-control" @bind-Value="model.AOA" />
         
-        <label for="aoy">The sideslip angle (in radians):</label>
+        <label for="aoy">The sideslip angle (in degrees):</label>
         <InputNumber TValue="double" id="aoy" class="form-control" @bind-Value="model.AOY" />
     </div>
     <button type="submit">Submit</button>
@@ -82,8 +95,8 @@
                                                model.NumberOfTilesChordwise, 
                                                model.Rho, 
                                                model.MagnitudeOfVInfinity, 
-                                               model.AOA, 
-                                               model.AOY
+                                               model.AOA * (Math.PI / 180), 
+                                               model.AOY * (Math.PI / 180)
                                                );
 
         coordinates.Clear();

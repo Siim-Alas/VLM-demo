@@ -29,10 +29,14 @@ namespace VortexLatticeClassLibrary.Overhead
             });
 
             // Parse the airfoil file for the 2-dimensional coordinates of the camber line
-            double[,] camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, args.NumberOfTilesChordwise + 1);
+            double[,] camberLine = AirfoilGeometryApproximator.GetCamberLine(args.Coordinates, 
+                                                                             args.NumberOfTilesChordwise + 1);
             
             // Generate an array of wing tiles
-            WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, args.Chord, args.WingSpan, args.NumberOfTilesSpanwise);
+            WingTile[] wingTiles = AirfoilGeometryApproximator.GetWingTiles(camberLine, 
+                                                                            args.Chord, 
+                                                                            args.WingSpan, 
+                                                                            args.NumberOfTilesSpanwise);
             
             // Generate a matrix with the aerodynamic linear equations
             Matrix<double> EquationMatrix = Aerodynamics.ConstructAICCirculationEquationMatrix(wingTiles, vInfinity);
@@ -42,23 +46,37 @@ namespace VortexLatticeClassLibrary.Overhead
 
             // Get the total aerodynamic reaction.
             Vector[] forces = Aerodynamics.GetForces(wingTiles, vInfinity, gammas, args.Rho);
-            Vector totalForce = new Vector(new double[] { 0, 0, 0 });
-            foreach (Vector f in forces)
-            {
-                totalForce += f;
-            }
+
+            Vector totalForce = Aerodynamics.GetTotalForce(forces);
+
+            Vector totalMoment = Aerodynamics.GetTotalMoment(new Vector(new double[] { 
+                                                                args.Chord / 2,
+                                                                args.WingSpan / 2,
+                                                                0
+                                                             }), 
+                                                             forces, 
+                                                             wingTiles);
             
-            // Get the magnitude of the lift force.
-            double lift = Aerodynamics.GetLift(totalForce);
-            
+            // Get the magnitude of the lift and drag forces.
+            double lift = totalForce.Coordinates[2];
+            double inducedDrag = totalMoment.Coordinates[0];
+
             // Get the coefficient of lift.
-            double CL = Aerodynamics.GetCL(lift, vInfinity, args.WingSpan * args.Chord, args.Rho);
+            double factor = 2 / (args.Rho * Math.Pow(vInfinity.Mag, 2) * args.WingSpan * args.Chord);
+            double CL = factor * lift;
+            double CDI = factor * inducedDrag;
+            double CM = factor * totalMoment.Mag / args.Chord;
 
             // Display
             Console.WriteLine("-------------------------  Data  -----------------------------");
             Console.WriteLine($"CL = {CL}");
 
-            SimulationComplete?.Invoke(this, new SimulationCompleteEventArgs(camberLine, wingTiles, forces));
+            SimulationComplete?.Invoke(this, new SimulationCompleteEventArgs(camberLine, 
+                                                                             wingTiles, 
+                                                                             forces,
+                                                                             CL,
+                                                                             CDI,
+                                                                             CM));
         }
     }
 }

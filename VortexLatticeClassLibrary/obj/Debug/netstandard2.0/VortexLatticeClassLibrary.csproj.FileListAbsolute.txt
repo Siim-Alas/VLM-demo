@@ -4,6 +4,6 @@ C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\bin\Debug
 C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.csprojAssemblyReference.cache
 C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.AssemblyInfoInputs.cache
 C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.AssemblyInfo.cs
-C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.csproj.CoreCompileInputs.cache
 C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.dll
 C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.pdb
+C:\Users\Siim\source\repos\VortexLatticeDemo\VortexLatticeClassLibrary\obj\Debug\netstandard2.0\VortexLatticeClassLibrary.csproj.CoreCompileInputs.cache

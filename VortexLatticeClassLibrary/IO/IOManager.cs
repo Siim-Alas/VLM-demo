@@ -22,12 +22,18 @@ namespace VortexLatticeClassLibrary.IO
             CamberLine = new double[0, 0];
             WingTiles = new WingTile[] { };
             Forces = new Vector[] { };
+            CL = 0;
+            CDI = 0;
+            CM = 0;
         }
 
         public double[,] Coordinates { get; private set; }
         public double[,] CamberLine { get; private set; }
         public WingTile[] WingTiles { get; private set; }
         public Vector[] Forces { get; private set; }
+        public double CL { get; private set; }
+        public double CDI { get; private set; }
+        public double CM { get; private set; }
 
         /// <summary>
         /// Parses airfoil datapoints from file and invokes an event with the datapoints (sorted by x) as args.
@@ -74,7 +80,7 @@ namespace VortexLatticeClassLibrary.IO
 
             using (var reader = new StringReader(file))
             {
-                Regex rx = new Regex(@"\b *([ 01]*\.[0-9]+)[ ]+([ 0-]*\.[0-9]+) *.*$");
+                Regex rx = new Regex(@"\b *([ 01]*\.[0-9]+) +([ 0-]*\.[0-9]+) *.*$");
                 Match match;
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -122,6 +128,9 @@ namespace VortexLatticeClassLibrary.IO
             CamberLine = args.CamberLine;
             WingTiles = args.WingTiles;
             Forces = args.Forces;
+            CL = args.CL;
+            CDI = args.CDI;
+            CM = args.CM;
         }
     }
 }

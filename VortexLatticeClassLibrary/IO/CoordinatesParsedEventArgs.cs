@@ -14,8 +14,7 @@ namespace VortexLatticeClassLibrary.IO
                                           double? rho = 1.225,
                                           double? magnitudeOfVInfinity = 30,
                                           double? aoa = 0,
-                                          double? aoy = 0
-                                          )
+                                          double? aoy = 0)
         {
             Coordinates = coordinates;
             WingSpan = wingSpan ?? 7;
