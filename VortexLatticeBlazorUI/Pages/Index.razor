@@ -7,8 +7,8 @@
                 style="fill:none;stroke:black;stroke-width:3" />
     <polyline points="@string.Join(' ', camberLine)"
                 style="fill:none;stroke:black;stroke-width:3" />
-    <line x1="@(250 - Math.Cos(model.AOA) * model.MagnitudeOfVInfinity * 10)" 
-          y1="@(500 + Math.Sin(model.AOA) * model.MagnitudeOfVInfinity * 10)" 
+    <line x1="@(250 - Math.Cos(model.AOA * (Math.PI / 180)) * model.MagnitudeOfVInfinity * 10)" 
+          y1="@(500 + Math.Sin(model.AOA * (Math.PI / 180)) * model.MagnitudeOfVInfinity * 10)" 
           x2="250" 
           y2="500" 
           style="stroke:rgb(0,255,0);stroke-width:2"/>

@@ -104,7 +104,8 @@ namespace VortexLatticeClassLibrary.Utilities
             Vector totalMoment = new Vector(new double[] { 0, 0, 0 });
             for (int i = 0; i < forces.Length; i++)
             {
-                totalMoment += Vector.Cross(forces[i], wingTiles[i].R - r);
+                // M_i = Vector.Cross(r_i, F_i)
+                totalMoment += Vector.Cross(wingTiles[i].R - r, forces[i]);
             }
             return totalMoment;
         }

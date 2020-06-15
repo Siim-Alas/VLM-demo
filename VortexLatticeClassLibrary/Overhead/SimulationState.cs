@@ -50,7 +50,7 @@ namespace VortexLatticeClassLibrary.Overhead
             Vector totalForce = Aerodynamics.GetTotalForce(forces);
 
             Vector totalMoment = Aerodynamics.GetTotalMoment(new Vector(new double[] { 
-                                                                args.Chord / 2,
+                                                                args.Chord / 4,
                                                                 args.WingSpan / 2,
                                                                 0
                                                              }), 
@@ -58,14 +58,14 @@ namespace VortexLatticeClassLibrary.Overhead
                                                              wingTiles);
             
             // Get the magnitude of the lift and drag forces.
-            double lift = totalForce.Coordinates[2];
-            double inducedDrag = totalMoment.Coordinates[0];
+            double lift = totalForce.Coordinates[2] * Math.Cos(args.AOA) - totalForce.Coordinates[0] * Math.Sin(args.AOA);
+            double inducedDrag = totalForce.Coordinates[2] * Math.Sin(args.AOA) + totalForce.Coordinates[0] * Math.Cos(args.AOA);
 
             // Get the coefficient of lift.
-            double factor = 2 / (args.Rho * Math.Pow(vInfinity.Mag, 2) * args.WingSpan * args.Chord);
+            double factor = 2 / (args.Rho * vInfinity.MagS * args.WingSpan * args.Chord);
             double CL = factor * lift;
             double CDI = factor * inducedDrag;
-            double CM = factor * totalMoment.Mag / args.Chord;
+            double CM = factor * totalMoment.Coordinates[1] / args.Chord;
 
             // Display
             Console.WriteLine("-------------------------  Data  -----------------------------");

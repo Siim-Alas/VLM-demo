@@ -14,12 +14,12 @@ namespace VortexLatticeClassLibrary.Utilities
         /// </summary>
         /// <param name="forwardLeft">The forward-left vertex position vector.</param>
         /// <param name="forwardRight">The forward-right vertex position vector.</param>
-        /// <param name="backRight">The back-left vertex position vector.</param>
-        public WingTile(Vector forwardLeft, Vector forwardRight, Vector backRight)
+        /// <param name="backLeft">The back-left vertex position vector.</param>
+        public WingTile(Vector forwardLeft, Vector forwardRight, Vector backLeft)
         {
             FL = forwardLeft;
             FR = forwardRight;
-            BL = backRight;
+            BL = backLeft;
         }
         /// <summary>
         /// The forward-left vertex position vector.
@@ -44,7 +44,7 @@ namespace VortexLatticeClassLibrary.Utilities
         /// <summary>
         /// The position-vector of the forward-left vertex of the horse-shoe vortex (1/4 from the front).
         /// </summary>
-        public Vector RA { get { return FL + 0.25 * (BL - FL); } }
+        public Vector RA { get { return 0.75 * FL + 0.25 * BL; } }
         /// <summary>
         /// The position-vector of the forward-left vertex of the horse-shoe vortex (1/4 from the front).
         /// </summary>
