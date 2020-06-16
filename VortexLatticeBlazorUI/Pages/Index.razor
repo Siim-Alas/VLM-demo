@@ -75,40 +75,44 @@
         <label for="aoy">The sideslip angle (in degrees):</label>
         <InputNumber TValue="double" id="aoy" class="form-control" @bind-Value="model.AOY" />
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit">Compute!</button>
 </EditForm>
 
-<button type="button" @onclick="@(() => this.StateHasChanged())"></button>
-
 @code {
-    private List<string> coordinates { get; set; } = new List<string>();
-    private List<string> camberLine { get; set; } = new List<string>();
+    private string[] coordinates { get {
+            string[] c = new string[SimState.IOManager.Coordinates.GetLength(0)];
+            for (int i = 0; i < SimState.IOManager.Coordinates.GetLength(0); i++)
+            {
+                c[i] = MapCoordinatesToSVG(SimState.IOManager.Coordinates[i, 0] * model.Chord, 
+                                           SimState.IOManager.Coordinates[i, 1] * model.Chord);
+            }
+            return c;
+        } }
+
+    private string[] camberLine { get {
+            string[] c = new string[SimState.IOManager.CamberLine.GetLength(0)];
+            for (int i = 0; i < SimState.IOManager.CamberLine.GetLength(0); i++)
+            {
+                c[i] = MapCoordinatesToSVG(SimState.IOManager.CamberLine[i, 0] * model.Chord, 
+                                           SimState.IOManager.CamberLine[i, 1] * model.Chord);
+            }
+            return c;
+        } }
 
     private SimulationParameterModel model = new SimulationParameterModel();
 
     private void OnButtonClicked()
     {
-        SimState.IOManager.ParseAirfoilDatFile(model.File, 
-                                               model.WingSpan, 
-                                               model.Chord, 
-                                               model.NumberOfTilesSpanwise, 
-                                               model.NumberOfTilesChordwise, 
-                                               model.Rho, 
-                                               model.MagnitudeOfVInfinity, 
-                                               model.AOA * (Math.PI / 180), 
+        SimState.IOManager.ParseAirfoilDatFile(model.File,
+                                               model.WingSpan,
+                                               model.Chord,
+                                               model.NumberOfTilesSpanwise,
+                                               model.NumberOfTilesChordwise,
+                                               model.Rho,
+                                               model.MagnitudeOfVInfinity,
+                                               model.AOA * (Math.PI / 180),
                                                model.AOY * (Math.PI / 180)
                                                );
-
-        coordinates.Clear();
-        for (int i = 0; i < SimState.IOManager.Coordinates.GetLength(0); i++)
-        {
-            coordinates.Add(MapCoordinatesToSVG(SimState.IOManager.Coordinates[i, 0], SimState.IOManager.Coordinates[i, 1]));
-        }
-        camberLine.Clear();
-        for (int i = 0; i < SimState.IOManager.CamberLine.GetLength(0); i++)
-        {
-            camberLine.Add(MapCoordinatesToSVG(SimState.IOManager.CamberLine[i, 0], SimState.IOManager.CamberLine[i, 1]));
-        }
     }
 
     private string MapCoordinatesToSVG(double x, double y)
